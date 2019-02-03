@@ -6,7 +6,7 @@ authors = ["shockham <samuel.hockham@gmail.com>"]
 [dependencies]
 log = "0.4"
 env_logger = "0.6"
-juniper = { version = "0.10", features = ["expose-test-schema", "serde_json"] }
-juniper_codegen = "0.10"
-juniper_warp = "0.1"
+juniper = { version = "0.11", features = ["expose-test-schema", "serde_json"] }
+juniper_codegen = "0.11"
+juniper_warp = "0.2"
 warp = "0.1"
