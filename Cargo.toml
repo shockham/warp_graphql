@@ -1,0 +1,12 @@
+[package]
+name = "warp_graphql"
+version = "0.1.0"
+authors = ["shockham <samuel.hockham@gmail.com>"]
+
+[dependencies]
+log = "0.4"
+env_logger = "0.5"
+juniper = { version = "0.10", features = ["expose-test-schema", "serde_json"] }
+juniper_codegen = "0.10"
+juniper_warp = "0.1"
+warp = "0.1"
