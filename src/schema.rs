@@ -3,7 +3,7 @@ use model::{Character, Database, Droid, Episode, Human};
 
 impl Context for Database {}
 
-graphql_interface!(<'a> &'a Character: Database as "Character" |&self| {
+graphql_interface!(<'a> &'a dyn Character: Database as "Character" |&self| {
     description: "A character in the Star Wars Trilogy"
 
     field id() -> &str as "The id of the character" {
@@ -14,7 +14,7 @@ graphql_interface!(<'a> &'a Character: Database as "Character" |&self| {
         Some(self.name())
     }
 
-    field friends(&executor) -> Vec<&Character>
+    field friends(&executor) -> Vec<&dyn Character>
     as "The friends of the character" {
         executor.context().get_friends(self.as_character())
     }
@@ -24,15 +24,15 @@ graphql_interface!(<'a> &'a Character: Database as "Character" |&self| {
     }
 
     instance_resolvers: |&context| {
-        &Human => context.get_human(&self.id()),
-        &Droid => context.get_droid(&self.id()),
+        &dyn Human => context.get_human(&self.id()),
+        &dyn Droid => context.get_droid(&self.id()),
     }
 });
 
-graphql_object!(<'a> &'a Human: Database as "Human" |&self| {
+graphql_object!(<'a> &'a dyn Human: Database as "Human" |&self| {
     description: "A humanoid creature in the Star Wars universe."
 
-    interfaces: [&Character]
+    interfaces: [&dyn Character]
 
     field id() -> &str as "The id of the human"{
         self.id()
@@ -42,7 +42,7 @@ graphql_object!(<'a> &'a Human: Database as "Human" |&self| {
         Some(self.name())
     }
 
-    field friends(&executor) -> Vec<&Character>
+    field friends(&executor) -> Vec<&dyn Character>
     as "The friends of the human" {
         executor.context().get_friends(self.as_character())
     }
@@ -56,10 +56,10 @@ graphql_object!(<'a> &'a Human: Database as "Human" |&self| {
     }
 });
 
-graphql_object!(<'a> &'a Droid: Database as "Droid" |&self| {
+graphql_object!(<'a> &'a dyn Droid: Database as "Droid" |&self| {
     description: "A mechanical creature in the Star Wars universe."
 
-    interfaces: [&Character]
+    interfaces: [&dyn Character]
 
     field id() -> &str as "The id of the droid" {
         self.id()
@@ -69,7 +69,7 @@ graphql_object!(<'a> &'a Droid: Database as "Droid" |&self| {
         Some(self.name())
     }
 
-    field friends(&executor) -> Vec<&Character>
+    field friends(&executor) -> Vec<&dyn Character>
     as "The friends of the droid" {
         executor.context().get_friends(self.as_character())
     }
@@ -88,13 +88,13 @@ graphql_object!(Database: Database as "Query" |&self| {
 
     field human(
         id: String as "id of the human"
-    ) -> Option<&Human> {
+    ) -> Option<&dyn Human> {
         self.get_human(&id)
     }
 
     field droid(
         id: String as "id of the droid"
-    ) -> Option<&Droid> {
+    ) -> Option<&dyn Droid> {
         self.get_droid(&id)
     }
 
@@ -102,7 +102,7 @@ graphql_object!(Database: Database as "Query" |&self| {
         episode: Option<Episode> as
         "If omitted, returns the hero of the whole saga. If provided, returns \
         the hero of that particular episode"
-    ) -> Option<&Character> {
+    ) -> Option<&dyn Character> {
         Some(self.get_hero(episode).as_character())
     }
 });
